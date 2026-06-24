@@ -1,0 +1,4 @@
+HASIL EVALUASI PANTUN-AI
+========================
+Eval loss  : 1.7405296564102173
+Perplexity : 5.700361856432849

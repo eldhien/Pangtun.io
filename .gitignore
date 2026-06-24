@@ -1,0 +1,10 @@
+models/pantun-gpt-antonheryanto
+models/pantun-gpt
+models/pantun-gpt-gabungan
+models/pantun-gpt-gabungan.zip
+
+*venv
+__pycache__/
+*.py[cod]
+*$py.class
+
