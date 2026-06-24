@@ -1,4 +1,3 @@
-\
 import os
 import sys
 
@@ -14,6 +13,41 @@ from inference import generate_pantun
 
 
 DEFAULT_MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "pantun-gpt-gabungan")
+
+SPEAK_PANTUN_JS = """
+(pantun) => {
+    const text = (pantun || "").trim();
+
+    if (!text) {
+        alert("Belum ada pantun untuk dibacakan.");
+        return [];
+    }
+
+    if (!("speechSynthesis" in window)) {
+        alert("Browser ini belum mendukung fitur speech audio.");
+        return [];
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "id-ID";
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+    const voice =
+        voices.find((item) => item.lang && item.lang.toLowerCase().startsWith("id")) ||
+        voices.find((item) => item.lang && item.lang.toLowerCase().startsWith("ms"));
+
+    if (voice) {
+        utterance.voice = voice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+    return [];
+}
+"""
 
 
 def generate_ui(tema, temperature, top_k, top_p, max_new_tokens):
@@ -97,11 +131,19 @@ with gr.Blocks(title="PANTUN-AI") as demo:
                 label="Hasil Pantun",
                 lines=8,
             )
+            speak_btn = gr.Button("🔊 Baca Pantun")
 
     btn.click(
         fn=generate_ui,
         inputs=[tema, temperature, top_k, top_p, max_new_tokens],
         outputs=output,
+    )
+    speak_btn.click(
+        fn=None,
+        inputs=output,
+        outputs=None,
+        js=SPEAK_PANTUN_JS,
+        show_progress="hidden",
     )
 
     gr.Markdown(
@@ -110,6 +152,7 @@ with gr.Blocks(title="PANTUN-AI") as demo:
         1. Masukkan tema atau kata kunci.
         2. Atur parameter generation jika diperlukan.
         3. Klik **Generate Pantun**.
+        4. Klik **🔊 Baca Pantun** untuk mendengarkan hasilnya.
         """
     )
 
