@@ -3,7 +3,6 @@ import sys
 
 import gradio as gr
 
-# Agar app.py bisa import file dari folder src
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(CURRENT_DIR)
 SRC_DIR = os.path.join(PROJECT_ROOT, "src")
