@@ -7,3 +7,5 @@ numpy
 pandas
 scikit-learn
 gradio
+fastapi
+uvicorn
