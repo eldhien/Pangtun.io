@@ -1,0 +1,9 @@
+source,tema,line_count,structure_score,rhyme_abab_score,relevance_score,fluency_score,coherence_score,total_score,quality_label,pantun
+model,pendidikan,4,1.0,1.0,0.3333333333333333,1.0,1.0,0.8666666666666667,baik,"Kain tenun dari Sumbawa
+Kain batik dari Pekalongan
+Jika ingin jadi mahasiswa
+Sekolah Dasar jangan diabaikan"
+baseline_rule_based,pendidikan,4,1.0,1.0,0.6666666666666666,1.0,1.0,0.9333333333333333,baik,"Semalu tumbuh tepi perigi
+Tumbuh bersama pokok lada
+Rajin belajar setiap pagi
+Ilmu bertambah di dalam dada"

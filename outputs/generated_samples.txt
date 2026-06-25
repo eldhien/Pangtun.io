@@ -1,0 +1,25 @@
+CONTOH OUTPUT MODEL DAN BASELINE
+================================
+
+Sumber : model
+Tema   : pendidikan
+Label  : baik
+Skor   : 0.87
+Kain tenun dari Sumbawa
+Kain batik dari Pekalongan
+Jika ingin jadi mahasiswa
+Sekolah Dasar jangan diabaikan
+
+---
+
+Sumber : baseline_rule_based
+Tema   : pendidikan
+Label  : baik
+Skor   : 0.93
+Semalu tumbuh tepi perigi
+Tumbuh bersama pokok lada
+Rajin belajar setiap pagi
+Ilmu bertambah di dalam dada
+
+---
+
