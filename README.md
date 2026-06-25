@@ -202,7 +202,45 @@ Untuk mengevaluasi model:
 python src/evaluate.py --model_path models/pantun-gpt-gabungan
 ```
 
-Hasil evaluasi akan menampilkan metrik seperti loss dan perplexity. Perplexity yang lebih rendah biasanya menandakan model lebih baik dalam memprediksi teks validasi, tetapi kualitas pantun tetap perlu dicek secara manual.
+Hasil evaluasi akan menampilkan:
+
+- `loss` dan `perplexity` pada data validasi
+- skor struktur pantun 4 baris
+- skor rima ABAB
+- skor relevansi tema
+- skor fluency/readability
+- skor koherensi
+- perbandingan dengan baseline rule-based
+- contoh output baik/kurang baik berdasarkan skor otomatis
+
+File evaluasi yang dihasilkan:
+
+```text
+outputs/evaluation_result.txt
+outputs/quality_summary.txt
+outputs/quality_evaluation.csv
+outputs/generated_samples.txt
+```
+
+Contoh evaluasi dengan tema khusus:
+
+```bash
+python src/evaluate.py --model_path models/pantun-gpt-gabungan --eval_themes "pendidikan,alam,teknologi,persahabatan,kesehatan"
+```
+
+Jika hanya ingin menghitung loss dan perplexity tanpa generate contoh pantun:
+
+```bash
+python src/evaluate.py --model_path models/pantun-gpt-gabungan --skip_quality_eval
+```
+
+Jika environment sedang bermasalah saat load dataset/pyarrow dan hanya ingin membuat evaluasi kualitas output:
+
+```bash
+python src/evaluate.py --model_path models/pantun-gpt-gabungan --skip_lm_eval
+```
+
+Perplexity yang lebih rendah biasanya menandakan model lebih baik dalam memprediksi teks validasi. Skor kualitas digunakan untuk melihat apakah output pantun relevan dengan tema, terbaca natural, koheren, dan mengikuti rima ABAB.
 
 ## Jalankan Aplikasi React shadcn
 
