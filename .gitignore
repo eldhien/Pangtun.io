@@ -7,4 +7,6 @@ models/pantun-gpt-gabungan.zip
 __pycache__/
 *.py[cod]
 *$py.class
+frontend/dist/
+frontend/node_modules/
 

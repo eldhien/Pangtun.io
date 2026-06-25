@@ -242,7 +242,37 @@ python src/evaluate.py --model_path models/pantun-gpt-gabungan --skip_lm_eval
 
 Perplexity yang lebih rendah biasanya menandakan model lebih baik dalam memprediksi teks validasi. Skor kualitas digunakan untuk melihat apakah output pantun relevan dengan tema, terbaca natural, koheren, dan mengikuti rima ABAB.
 
-## Jalankan Aplikasi Gradio
+## Jalankan Aplikasi React shadcn
+
+Pastikan model sudah ada di:
+
+```text
+models/pantun-gpt-gabungan
+```
+
+Jalankan backend Python API:
+
+```bash
+uvicorn app.api:api --reload --port 8000
+```
+
+Di terminal lain, jalankan frontend React:
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
+
+Buka URL lokal Vite:
+
+```text
+http://127.0.0.1:5173
+```
+
+Frontend shadcn akan memanggil fitur Python melalui endpoint `POST /api/generate`.
+
+## Jalankan Aplikasi Gradio Opsional
 
 Pastikan model sudah ada di:
 
@@ -277,7 +307,10 @@ python -m venv venv
 pip install -r requirements.txt
 python src/train.py --model_name distilgpt2 --output_dir models/pantun-gpt-gabungan --epochs 3
 python src/inference.py --model_path models/pantun-gpt-gabungan --tema "pendidikan"
-python app/app.py
+uvicorn app.api:api --reload --port 8000
+cd frontend
+pnpm install
+pnpm run dev
 ```
 
 ## Catatan
