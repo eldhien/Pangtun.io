@@ -17,6 +17,7 @@ Dataset yang digunakan:
 - Evaluasi loss dan perplexity
 - Demo aplikasi berbasis Gradio
 - Fallback rule-based jika output model belum valid
+- Guardrail keamanan untuk menolak tema berbahaya seperti pornografi, narkoba, kekerasan, aktivitas ilegal, dan ujaran kebencian
 
 ## Struktur Folder
 
@@ -168,6 +169,18 @@ python src/inference.py --model_path models/pantun-gpt-gabungan --tema "teknolog
 python src/inference.py --model_path models/pantun-gpt-gabungan --tema "cinta"
 ```
 
+Jika tema mengarah ke konten berbahaya, sistem akan menolak sebelum proses generate dijalankan:
+
+```bash
+python src/inference.py --model_path models/pantun-gpt-gabungan --tema "narkoba"
+```
+
+Contoh respons:
+
+```text
+Maaf, tema tersebut tidak dapat diproses karena berpotensi mengarah ke narkoba dan zat terlarang. Silakan gunakan tema yang aman dan positif, misalnya pendidikan, persahabatan, alam, kesehatan, atau teknologi.
+```
+
 Parameter generation yang bisa diatur:
 
 ```bash
@@ -232,3 +245,5 @@ python app/app.py
 ## Catatan
 
 Proyek ini tidak menggunakan provider LLM/API tertutup sebagai inti AI. Model dijalankan dan di-fine-tuning secara lokal menggunakan library open source.
+
+Proyek ini juga membatasi tema yang berpotensi membahayakan pengguna atau orang lain. Filter keamanan dilakukan pada input tema dan output pantun untuk mencegah konten pornografi, narkoba, kekerasan, aktivitas ilegal, dan ujaran kebencian.

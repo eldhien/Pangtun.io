@@ -3,9 +3,6 @@ import argparse
 import os
 import re
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
 from config import DEFAULT_OUTPUT_DIR, SPECIAL_TOKENS
 
 
@@ -59,6 +56,94 @@ def is_readable_line(line: str) -> bool:
 
 def is_quality_pantun(lines) -> bool:
     return len(lines) == 4 and is_abab_rhyme(lines) and all(is_readable_line(line) for line in lines)
+
+
+UNSAFE_TOPIC_KEYWORDS = {
+    "konten seksual/pornografi": [
+        "pornografi",
+        "porno",
+        "seks",
+        "sex",
+        "telanjang",
+        "bugil",
+        "mesum",
+        "cabul",
+        "pelecehan",
+        "perkosaan",
+    ],
+    "narkoba dan zat terlarang": [
+        "narkoba",
+        "narkotika",
+        "sabu",
+        "ganja",
+        "kokain",
+        "heroin",
+        "ekstasi",
+        "obat terlarang",
+        "jual obat",
+        "meracik narkoba",
+    ],
+    "kekerasan dan senjata": [
+        "membunuh",
+        "bunuh diri",
+        "pembunuhan",
+        "bom",
+        "teror",
+        "senjata api",
+        "menikam",
+        "menyiksa",
+        "racun",
+    ],
+    "aktivitas ilegal/berbahaya": [
+        "mencuri",
+        "penipuan",
+        "scam",
+        "phishing",
+        "hack akun",
+        "membobol",
+        "membajak",
+        "carding",
+        "pemalsuan",
+    ],
+    "ujaran kebencian": [
+        "rasis",
+        "hina agama",
+        "kebencian suku",
+        "genosida",
+    ],
+}
+
+SAFE_REFUSAL_MESSAGE = (
+    "Maaf, tema tersebut tidak dapat diproses karena berpotensi mengarah ke "
+    "{category}. Silakan gunakan tema yang aman dan positif, misalnya "
+    "pendidikan, persahabatan, alam, kesehatan, atau teknologi."
+)
+
+
+def normalize_for_safety(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9]+", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def detect_unsafe_category(text: str) -> str | None:
+    normalized_text = normalize_for_safety(text)
+
+    for category, keywords in UNSAFE_TOPIC_KEYWORDS.items():
+        for keyword in keywords:
+            normalized_keyword = normalize_for_safety(keyword)
+            if re.search(rf"\b{re.escape(normalized_keyword)}\b", normalized_text):
+                return category
+
+    return None
+
+
+def is_safe_text(text: str) -> bool:
+    return detect_unsafe_category(text) is None
+
+
+def build_refusal_message(category: str) -> str:
+    return SAFE_REFUSAL_MESSAGE.format(category=category)
 
 
 def choose_template_group(tema: str) -> str:
@@ -199,6 +284,13 @@ def generate_pantun(
     repetition_penalty: float = 1.2,
     attempts: int = 3,
 ) -> str:
+    unsafe_category = detect_unsafe_category(tema)
+    if unsafe_category:
+        return build_refusal_message(unsafe_category)
+
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForCausalLM.from_pretrained(model_path)
 
@@ -238,9 +330,19 @@ def generate_pantun(
                 fallback = pantun
 
             if is_quality_pantun(lines):
-                return "\n".join(lines)
+                safe_pantun = "\n".join(lines)
+                if is_safe_text(safe_pantun):
+                    return safe_pantun
 
-    return fallback or get_rule_based_fallback(tema)
+    if fallback and is_safe_text(fallback):
+        return fallback
+
+    fallback_pantun = get_rule_based_fallback(tema)
+    fallback_category = detect_unsafe_category(fallback_pantun)
+    if fallback_category:
+        return build_refusal_message(fallback_category)
+
+    return fallback_pantun
 
 
 def parse_args():
